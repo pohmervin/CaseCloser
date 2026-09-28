@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CaseCloser Practice Pad</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: Canvas;
+      color: CanvasText;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    main {
+      width: min(760px, calc(100vw - 48px));
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    p {
+      margin: 0 0 24px;
+      color: color-mix(in srgb, CanvasText 62%, transparent);
+    }
+
+    canvas {
+      display: block;
+      box-sizing: border-box;
+      width: 100%;
+      height: 230px;
+      border: 2px solid color-mix(in srgb, CanvasText 30%, transparent);
+      border-radius: 12px;
+      background: white;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    footer {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 13px;
+      color: color-mix(in srgb, CanvasText 55%, transparent);
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid color-mix(in srgb, CanvasText 25%, transparent);
+      border-radius: 8px;
+      padding: 8px 16px;
+      background: color-mix(in srgb, CanvasText 8%, Canvas);
+      color: CanvasText;
+      font: inherit;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Practice signature box</h1>
+    <p>Select the white rectangle with CaseCloser, then use the whole physical trackpad as this box.</p>
+    <canvas id="pad" aria-label="Practice signature area"></canvas>
+    <footer>
+      <span>This page is local and does not save or transmit anything.</span>
+      <button id="clear" type="button">Clear</button>
+    </footer>
+  </main>
+
+  <script>
+    const canvas = document.querySelector("#pad");
+    const context = canvas.getContext("2d");
+    let drawing = false;
+
+    function resize() {
+      const scale = window.devicePixelRatio || 1;
+      const bounds = canvas.getBoundingClientRect();
+      canvas.width = Math.round(bounds.width * scale);
+      canvas.height = Math.round(bounds.height * scale);
+      context.setTransform(scale, 0, 0, scale, 0, 0);
+      context.strokeStyle = "#111";
+      context.lineWidth = 2.5;
+      context.lineCap = "round";
+      context.lineJoin = "round";
+    }
+
+    function point(event) {
+      const bounds = canvas.getBoundingClientRect();
+      return { x: event.clientX - bounds.left, y: event.clientY - bounds.top };
+    }
+
+    canvas.addEventListener("pointerdown", event => {
+      drawing = true;
+      canvas.setPointerCapture(event.pointerId);
+      const p = point(event);
+      context.beginPath();
+      context.moveTo(p.x, p.y);
+      context.lineTo(p.x + 0.01, p.y + 0.01);
+      context.stroke();
+    });
+
+    canvas.addEventListener("pointermove", event => {
+      if (!drawing) return;
+      const p = point(event);
+      context.lineTo(p.x, p.y);
+      context.stroke();
+    });
+
+    function finish(event) {
+      if (!drawing) return;
+      drawing = false;
+      context.closePath();
+      if (canvas.hasPointerCapture(event.pointerId)) {
+        canvas.releasePointerCapture(event.pointerId);
+      }
+    }
+
+    canvas.addEventListener("pointerup", finish);
+    canvas.addEventListener("pointercancel", finish);
+    document.querySelector("#clear").addEventListener("click", () => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+    });
+    window.addEventListener("resize", resize);
+    resize();
+  </script>
+</body>
+</html>
