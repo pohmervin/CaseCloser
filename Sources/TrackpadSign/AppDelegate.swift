@@ -67,28 +67,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        let currentFrontmost = NSWorkspace.shared.frontmostApplication
-        let targetApplication: NSRunningApplication?
-        if let currentFrontmost,
-           currentFrontmost.processIdentifier != ProcessInfo.processInfo.processIdentifier {
-            targetApplication = currentFrontmost
-        } else {
-            targetApplication = lastExternalApplication
+        guard let target = TargetPickerController.chooseTarget(
+            preferredProcessIdentifier: lastExternalApplication?.processIdentifier
+        ) else {
+            if TargetPickerController.hasAvailableTargets == false {
+                showAlert(
+                    title: "No target application found",
+                    message: "Open the document or browser containing the signature box, then try again."
+                )
+            }
+            return
         }
 
-        guard let targetApplication else {
+        guard !target.application.isTerminated else {
             showAlert(
-                title: "No target application found",
-                message: "Bring the document or browser containing the signature box to the front, then start Signature Mode again."
+                title: "The selected application closed",
+                message: "Open it again, then choose its window from CaseCloser."
             )
             return
         }
 
         mainWindowController?.window?.orderOut(nil)
-        targetApplication.activate(options: [])
+        target.activate()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-            self?.presentSelectionOverlay(targetApplication: targetApplication)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
+            guard !target.application.isTerminated else {
+                self?.showMainWindow()
+                return
+            }
+            target.activate()
+            self?.presentSelectionOverlay(targetApplication: target.application)
         }
     }
 
@@ -154,7 +162,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             stopItem.target = self
             menu.addItem(stopItem)
         } else {
-            let startItem = NSMenuItem(title: "Select Signature Area…", action: #selector(startSignatureMode), keyEquivalent: "s")
+            let startItem = NSMenuItem(title: "Choose Target & Select Area…", action: #selector(startSignatureMode), keyEquivalent: "s")
             startItem.keyEquivalentModifierMask = [.command, .option]
             startItem.target = self
             menu.addItem(startItem)

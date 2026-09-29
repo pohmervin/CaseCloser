@@ -52,7 +52,7 @@ final class MainWindowController: NSWindowController, NSWindowDelegate {
         explanation.alignment = .center
         explanation.maximumNumberOfLines = 4
 
-        let steps = NSTextField(wrappingLabelWithString: "1. Open the document or webpage containing the signature box.\n2. Return here and select Select Signature Area.\n3. Drag around the box. Your client can then imagine that rectangle on the trackpad and sign with one finger.")
+        let steps = NSTextField(wrappingLabelWithString: "1. Open the document or webpage containing the signature box.\n2. Select Choose Target & Select Area, then choose its window.\n3. CaseCloser brings it forward; drag around the box, then sign with one finger.")
         steps.font = .systemFont(ofSize: 13)
         steps.textColor = .labelColor
         steps.maximumNumberOfLines = 5
@@ -62,7 +62,7 @@ final class MainWindowController: NSWindowController, NSWindowDelegate {
         privacy.textColor = .tertiaryLabelColor
         privacy.alignment = .center
 
-        let startButton = NSButton(title: "Select Signature Area…", target: self, action: #selector(startPressed))
+        let startButton = NSButton(title: "Choose Target & Select Area…", target: self, action: #selector(startPressed))
         startButton.bezelStyle = .rounded
         startButton.controlSize = .large
         startButton.keyEquivalent = "\r"
@@ -86,7 +86,7 @@ final class MainWindowController: NSWindowController, NSWindowDelegate {
             stack.centerYAnchor.constraint(equalTo: root.centerYAnchor),
             explanation.widthAnchor.constraint(equalToConstant: 460),
             steps.widthAnchor.constraint(equalToConstant: 430),
-            startButton.widthAnchor.constraint(equalToConstant: 230)
+            startButton.widthAnchor.constraint(equalToConstant: 270)
         ])
 
         controller.view = root

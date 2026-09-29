@@ -37,10 +37,11 @@ To create the distributable zip:
 ## Use
 
 1. Open the webpage, PDF, or application containing the signature box.
-2. Open CaseCloser and select **Select Signature Area…**.
-3. Drag a rectangle around the signature box.
-4. Imagine that the whole trackpad is the selected rectangle, then sign with one finger. Contact starts a stroke and lifting ends it; no click is required.
-5. Check the memory-only preview, then press **Return**. CaseCloser brings the selected app forward, applies the captured strokes using normal system mouse input, clears its memory, restores the cursor and closes.
+2. Open CaseCloser and select **Choose Target & Select Area…**.
+3. Choose the open window or application containing the signature field. CaseCloser brings it forward automatically.
+4. Drag a rectangle around the signature box.
+5. Imagine that the whole trackpad is the selected rectangle, then sign with one finger. Contact starts a stroke and lifting ends it; no click is required.
+6. Check the memory-only preview, then press **Return**. CaseCloser brings the selected app forward, applies the captured strokes using normal system mouse input, clears its memory, restores the cursor and closes.
 
 Press **Escape** instead to cancel without applying the signature.
 
